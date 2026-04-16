@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Software Engineering Assessment</title>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                margin: 40px;
+                color: #333;
+            }
+            table {
+                border-collapse: collapse;
+                margin-bottom: 40px;
+                width: 300px;
+            }
+            th, td {
+                border: 1px solid #ddd;
+                padding: 10px;
+                text-align: left;
+            }
+            th {
+                background-color: #f4f4f4;
+                font-weight: bold;
+
+            }
+        </style>
+    </head>
+    <body>
+        <h2>Table 1</h2>
+        <table id="table1">
+            <thead>
+                <tr>
+                    <th>Index #</th>
+                    <th>Value</th>
+                </tr>
+            </thead>
+            <tbody>
+
+            </tbody>
+        </table>
+
+        <h2>Table 2</h2>
+        <table id="table2">
+            <thead>
+                <tr>
+                    <th>Category</th>
+                    <th>Value</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Alpha</td>
+                    <td id="alpha-val">Loading...</td>
+                </tr>
+                <tr>
+                    <td>Beta</td>
+                    <td id="beta-val">Loading...</td>
+                </tr>
+                <tr>
+                <td>Charlie</td>
+                <td id="charlie-val">Loading...</td>
+            </tr>
+            </tbody>
+        </table>
+
+        <script>
+            // 1. Fetch CSV file
+            fetch('Table_Input.csv')
+                .then(response => response.text())
+                .then(csvText => {
+
+                    // 2. Parse CSV data
+                    const rows = csvText.trim().split('\n');
+                    const dataDict = {}; //Hash Map
+                    const table1Body = document.querySelector('#table1 tbody');
+
+                    // Loop through rows
+                    for (let i=1; i < rows.length; i++) {
+                        const row = rows[i].trim();
+                        if (!row) continue; 
+                        
+                        // Split the row by comma
+                        const [index, valueString] = row.split(',');
+                        const valueStr = parseInt(valueString, 10);
+
+                        // Save to dictionary
+                        dataDict[index] = valueStr;
+
+                        // Dynamically build Table 1
+                        const tr = document.createElement('tr');
+                        tr.innerHTML = '<td>${index}</td><td>${valueStr}</td>';
+                        table1Body.appendChild(tr);
+                    }
+
+                    // 3. Table 2 Process
+                    // Alpha = A5 + A20
+                    const alpha = dataDict['A5'] + dataDict['A20'];
+
+                    // Beta = A15 / A7
+                    const beta = Math.trunc(dataDict['A15'] / dataDict['A7']);
+
+                    // Charlie = A13 * A12
+                    const charlie = dataDict['A13'] * dataDict['A12'];
+
+                    // 4. Inject the calculated integers into Table 2
+                    document.getElementById('alpha-val').textContent = alpha;
+                    document.getElementById('beta-val').textContent = beta;
+                    document.getElementById('charlie-val').textContent = charlie;
+                })
+                .catch(error => {
+                    console.error('Error reading the CSV:', error);
+                    document.getElementById('alpha-val').textContent = "Error loading data";
+
+                });
+                        
+        </script>
+    </body>
+</html>
